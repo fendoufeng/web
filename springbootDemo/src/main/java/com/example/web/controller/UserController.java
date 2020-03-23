@@ -2,7 +2,6 @@ package com.example.web.controller;
 
 import com.example.web.entity.User;
 import com.example.web.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -101,6 +100,11 @@ public class UserController {
             return "fail";
         }
 
+    }
+
+    @RequestMapping("/postTest")
+    public String postTest(User user){
+        return  user.getUsername()+user.getPassword();
     }
 
 }
