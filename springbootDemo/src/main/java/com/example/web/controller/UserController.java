@@ -4,9 +4,11 @@ import com.example.web.entity.User;
 import com.example.web.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Date;
 import java.util.List;
 
 @RestController
@@ -22,23 +24,33 @@ public class UserController {
 
     @RequestMapping("/getUserById")
     public User getUserById(){
-        return userService.getUserById(2);
+
+        User user =  userService.getUserById(2);
+        if (user == null){
+            System.out.println("ccc");
+            return  null;
+        } else {
+            return user;
+        }
+
     }
 
     @RequestMapping("/addUser")
     public void addUser(){
-        User user = new User();
-        user.setPassword("4444");
-        user.setUsername("gggg");
-        userService.addUser(user);
+       String username = "jiafeng";
+       String password = "123456";
+       User user = new User();
+       user.setUsername(username);
+       user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+       user.setCreate_time(new Date(System.currentTimeMillis()));
+       userService.addUser(user);
     }
 
     @RequestMapping("/editUser")
     public String  editUser(){
         User user = new User();
-        user.setId(3);
-        user.setPassword("66666");
-        user.setUsername("gggg");
+        user.setBrithday(Date.valueOf("1995-09-21"));
+        user.setEmail("498304115@qq.com");
         int result = userService.editUser(user);
         if (result > 0) {
             return "success";
@@ -49,12 +61,46 @@ public class UserController {
 
     @RequestMapping("/deleteUser")
     public String deleteUser(){
-        int result = userService.deleteUser(2);
+        int result = userService.deleteUser(3);
         if (result > 0){
             return "delete success";
         } else {
             return "delete fail";
         }
+    }
+
+    @RequestMapping("/updatePassword")
+    public String updatePassword(){
+        String username = "jiafeng";
+        String oldPassword1 = "123456";
+        String oldPassword2 = "123456";
+        String newPassword = "123456789";
+
+        boolean result = userService.updatePassword(username,oldPassword1,oldPassword2,newPassword);
+
+        if (result){
+            return "success";
+        } else {
+            return "fail,all reason";
+        }
+    }
+
+    @RequestMapping("/updatePersonalInfo")
+    public String updatePersonalInfo(){
+
+        User user = userService.getUserById(4);
+
+        user.setPassword("aaaa");
+        user.setEmail("1111@123.com");
+        user.setNickname("jf");
+
+        boolean result = userService.updatePersonalInfo(user);
+        if (result){
+            return  "success";
+        } else {
+            return "fail";
+        }
+
     }
 
 }
