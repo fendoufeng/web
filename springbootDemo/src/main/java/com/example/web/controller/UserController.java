@@ -7,6 +7,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class UserController {
         String username = "jiafeng";
         String oldPassword1 = "123456";
         String oldPassword2 = "123456";
-        String newPassword = "123456789";
+        String newPassword = "123456";
 
         boolean result = userService.updatePassword(username,oldPassword1,oldPassword2,newPassword);
 
@@ -102,9 +103,19 @@ public class UserController {
 
     }
 
-    @RequestMapping("/postTest")
-    public String postTest(User user){
-        return  user.getUsername()+user.getPassword();
+    @RequestMapping("/login")
+    public String logIn(User user, HttpServletRequest request){
+        boolean flag = true;
+
+        flag = userService.logIn(user.getUsername(),user.getPassword());
+
+        if (flag){
+            request.getSession().setAttribute("_session_user",user);
+            return "登录成功";
+       }
+        return "登录失败";
+
     }
+
 
 }
